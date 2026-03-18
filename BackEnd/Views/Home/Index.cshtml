@@ -1,0 +1,144 @@
+﻿@model List<BackEnd.Models.Product>
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+<div class="home-search">
+
+    <h3 class="search-title">
+        Bạn tìm là <b>Mixi Sport có</b>
+    </h3>
+
+    <form method="get" action="/Home/Search" class="search-box">
+
+        <div class="search-input-wrap">
+
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+            <input type="text"
+                   name="keyword"
+                   placeholder="Khô gà / Khô mực đang sale 64%" />
+
+        </div>
+
+        <button type="submit">Tìm kiếm</button>
+
+    </form>
+
+</div>
+
+<div class="home-banner">
+
+    <img src="/images/bia.jpg">
+
+</div>
+
+
+<!-- SEARCH -->
+
+
+
+
+
+
+<section class="na-section">
+
+    <h2 class="na-title">NEW ARRIVALS</h2>
+
+
+    <div class="category-grid">
+
+        <a class="category-card mint" href="/Product/QuanAo">Quần áo</a>
+
+        <a class="category-card blue" href="/Product/Giay">Giày</a>
+
+        <a class="category-card orange" href="/Product/DungCu">Dụng cụ</a>
+
+        <a class="category-card purple" href="/Product/ThucPham">Thực phẩm</a>
+
+    </div>
+
+
+
+    <div class="product-grid">
+
+        @foreach (var item in Model)
+        {
+
+            <div class="product-card">
+
+                <img src="@item.Image">
+
+                <p class="product-name">@item.Name</p>
+
+
+                <div class="rating">
+
+                    <span class="rating-number">@item.Rating</span>
+
+                    <span class="stars">
+
+                        @{
+                            int full = (int)Math.Floor(item.Rating);
+                            bool half = (item.Rating - full) >= 0.5;
+                            int empty = 5 - full - (half ? 1 : 0);
+                        }
+
+                        @for (int i = 0; i < full; i++)
+                        {
+                            <i class="fa-solid fa-star star-full"></i>
+                        }
+
+                        @if (half)
+                        {
+                            <i class="fa-solid fa-star-half-stroke star-half"></i>
+                        }
+
+                        @for (int i = 0; i < empty; i++)
+                        {
+                            <i class="fa-regular fa-star star-empty"></i>
+                        }
+
+                    </span>
+
+                    | @item.ReviewCount đánh giá
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</section>
+
+
+<button onclick="topFunction()" id="backTop">↑</button>
+
+
+<script>
+
+    let backTop = document.getElementById("backTop");
+
+    window.onscroll = function () {
+
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200)
+    backTop.style.display = "block";
+    else
+    backTop.style.display = "none";
+
+    };
+
+    function topFunction() {
+
+    window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+    });
+
+    }
+
+</script>

@@ -1,0 +1,307 @@
+﻿@model List<BackEnd.Models.CartItem>
+
+<style>
+
+    .container-cart {
+        display: flex;
+        gap: 40px;
+        margin-top: 30px;
+    }
+
+    .cart-left {
+        width: 70%;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .cart-table th {
+            background: #f5f5f5;
+            padding: 12px;
+        }
+
+        .cart-table td {
+            padding: 14px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+    .qty-btn {
+        background: black;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .cart-right {
+        width: 30%;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .vietqr-header {
+        background: #1d4ed8;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .vietqr-body {
+        padding: 20px;
+    }
+
+    /* logo + select cùng dòng */
+
+    .bank-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .bank-logo {
+        width: 10%;
+    }
+
+        .bank-logo img {
+            width: 100%;
+        }
+
+    .bank-select {
+        width: 90%;
+    }
+
+        .bank-select select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+    .pay-btn {
+        background: #e11d48;
+        color: white;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .qr-popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .qr-box {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        width: 320px;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+</style>
+
+<div class="container-cart">
+
+    <div class="cart-left">
+
+        <h2>GIỎ HÀNG</h2>
+
+        <table class="cart-table">
+
+            <tr>
+                <th>Ảnh</th>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                var price = item.Product.Price * item.Quantity;
+
+                <tr>
+
+                    <td>
+                        <img src="@item.Product.Image" width="70">
+                    </td>
+
+                    <td>@item.Product.Name</td>
+
+                    <td>
+
+                        <a class="qty-btn" href="/Cart/Decrease/@item.Product.Id">-</a>
+
+                        <span style="margin:0 10px;font-weight:bold">@item.Quantity</span>
+
+                        <a class="qty-btn" href="/Cart/Increase/@item.Product.Id">+</a>
+
+                    </td>
+
+                    <td>@price.ToString("N0").Replace(",", ".") đ</td>
+
+                    <td>
+                        <a href="/Cart/Remove/@item.Product.Id" style="color:red">Xóa</a>
+                    </td>
+
+                </tr>
+            }
+
+        </table>
+
+    </div>
+
+    <div class="cart-right">
+
+        <div class="vietqr-header">
+            Thanh toán VietQR
+        </div>
+
+        <div class="vietqr-body">
+
+            <h3>Ngân hàng</h3>
+
+            <div class="bank-row">
+
+                <div class="bank-logo">
+                    <img id="bankLogo">
+                </div>
+
+                <div class="bank-select">
+                    <select id="bankSelect">
+                        <option value="">-- Chọn ngân hàng --</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <br>
+
+            <h3>Tổng tiền</h3>
+
+            <p id="total" style="font-size:22px;font-weight:bold">
+                @Model.Sum(x => x.Product.Price * x.Quantity).ToString("N0").Replace(",", ".") đ
+            </p>
+
+            <button class="pay-btn" onclick="createQR()">
+                Thanh toán
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="qr-popup" class="qr-popup">
+
+    <div class="qr-box">
+
+        <span class="close-btn" onclick="closeQR()">×</span>
+
+        <h2>Quét QR để thanh toán</h2>
+
+        <div id="qr-image"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+    let banks=[]
+
+    document.addEventListener("DOMContentLoaded",function(){
+
+    fetch("https://api.vietqr.io/v2/banks")
+    .then(res=>res.json())
+    .then(data=>{
+
+    banks=data.data
+
+    let select=document.getElementById("bankSelect")
+
+    banks.forEach(bank=>{
+
+    let option=document.createElement("option")
+
+    option.value=bank.bin
+    option.text=bank.shortName+" - "+bank.name
+
+    select.appendChild(option)
+
+    })
+
+    })
+
+    document.getElementById("bankSelect").addEventListener("change",function(){
+
+    let bank=banks.find(x=>x.bin==this.value)
+
+    if(bank){
+    document.getElementById("bankLogo").src=bank.logo
+    }
+
+    })
+
+    })
+
+
+    function createQR(){
+
+    let bankBin=document.getElementById("bankSelect").value
+
+    if(!bankBin){
+    alert("Vui lòng chọn ngân hàng")
+    return
+    }
+
+    let amount=document.getElementById("total").innerText
+
+    amount=amount.replace(/\./g,"").replace(" đ","")
+
+    let account="123456789"
+
+    let qr=`https://img.vietqr.io/image/${bankBin}-${account}-compact.png?amount=${amount}&addInfo=ThanhToanDonHang`
+
+    document.getElementById("qr-image").innerHTML=
+    `<img src="${qr}" width="260">`
+
+    document.getElementById("qr-popup").style.display="flex"
+
+    }
+
+    function closeQR(){
+    document.getElementById("qr-popup").style.display="none"
+    }
+
+</script>

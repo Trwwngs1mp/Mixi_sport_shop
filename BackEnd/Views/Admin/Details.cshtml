@@ -1,0 +1,13 @@
+﻿@model BackEnd.Models.Product
+
+<div class="container mt-4">
+    <h3>📄 Chi tiết sản phẩm</h3>
+
+    <img src="@Model.Image" width="200" class="mb-3" />
+
+    <p><b>Tên:</b> @Model.Name</p>
+    <p><b>Giá:</b> @Model.Price VNĐ</p>
+    <p><b>Rating:</b> ⭐ @Model.Rating</p>
+
+    <a href="/Admin" class="btn btn-primary">Quay lại</a>
+</div>

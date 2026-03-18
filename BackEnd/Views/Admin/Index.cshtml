@@ -1,0 +1,267 @@
+﻿@model List<BackEnd.Models.Product>
+
+@{
+    ViewData["Title"] = "Admin - Quản lý sản phẩm";
+}
+
+<style>
+    /* ===== CARD ===== */
+    .product-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+        }
+
+    /* ===== GRID ===== */
+    .product-grid {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(5,1fr);
+        gap: 20px;
+        width: 90%;
+        margin: auto;
+    }
+
+    /* ===== IMAGE ===== */
+    .product-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    /* ===== TEXT ===== */
+    .product-name {
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+    /* ===== RATING ===== */
+    .rating {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    /* ===== ADMIN BUTTON FLOAT ===== */
+    .admin-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 6px;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: 0.25s;
+    }
+
+    .product-card:hover .admin-actions {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .admin-actions a {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    /* edit */
+    .btn-edit {
+        background: #ffc107;
+    }
+
+    /* delete */
+    .btn-delete {
+        background: #dc3545;
+    }
+
+    /* ===== ADD BUTTON ===== */
+    .btn-add {
+        display: inline-block;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+    /* ===== SEARCH ===== */
+    .home-search {
+        width: 90%;
+        margin: 25px auto;
+    }
+
+    .search-box {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* ô input */
+
+    .search-input-wrap {
+        position: relative;
+        width: 500px;
+    }
+
+        .search-input-wrap input {
+            width: 100%;
+            height: 45px;
+            padding-left: 40px;
+            padding-right: 15px;
+            border: 2px solid #ddd;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+        }
+
+    /* icon kính lúp */
+
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+    }
+
+    /* nút tìm */
+
+    .search-box button {
+        height: 45px;
+        padding: 0 25px;
+        background: #007bff;
+        border: none;
+        color: white;
+        font-weight: 700;
+        border-radius: 0 8px 8px 0;
+        cursor: pointer;
+    }
+
+        .search-box button:hover {
+            background: #0056b3;
+        }
+
+    .header-right i {
+        margin-right: 6px;
+    }
+
+    .product-name {
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    .rating {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .rating-number {
+        margin-right: 5px;
+        font-weight: 600;
+    }
+
+    .star-full {
+        color: #f1c40f;
+    }
+
+    .star-half {
+        color: #f1c40f;
+    }
+
+    .star-empty {
+        color: #ccc;
+    }
+
+    .home-search a {
+        text-decoration: none;
+    }
+
+    .product-card {
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .product-card p {
+            text-decoration: none;
+        }
+
+    .search-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+</style>
+
+<!-- 🔍 SEARCH -->
+<div class="home-search">
+
+    <h3>🔧 Quản lý sản phẩm</h3>
+
+    <form method="get" action="/Admin/Index" class="search-box">
+
+        <div class="search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text"
+                   name="keyword"
+                   value="@Context.Request.Query["keyword"]"
+                   placeholder="Tìm sản phẩm..." />
+        </div>
+
+        <button type="submit">Tìm</button>
+
+    </form>
+
+</div>
+
+<!-- ➕ ADD -->
+<div style="width:90%; margin:auto; text-align:right; margin-bottom:20px;">
+    <a href="/Admin/Create" class="btn-add">
+        + Thêm sản phẩm
+    </a>
+</div>
+
+<!-- GRID -->
+<div class="product-grid">
+
+    @foreach (var item in Model)
+    {
+        <div class="product-card">
+
+            <img src="@item.Image">
+
+            <p class="product-name">@item.Name</p>
+
+            <div class="rating">
+                ⭐ @item.Rating | @item.ReviewCount đánh giá
+            </div>
+
+            <!-- ADMIN BUTTON -->
+            <div class="admin-actions">
+                <a href="/Admin/Edit/@item.Id" class="btn-edit">✏️</a>
+                <a href="/Admin/Delete/@item.Id" class="btn-delete">🗑️</a>
+            </div>
+
+        </div>
+    }
+
+</div>

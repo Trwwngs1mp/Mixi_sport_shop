@@ -1,0 +1,238 @@
+/* style.css - sạch & đầy đủ hiệu ứng
+   Reset, header, menu, NEW ARRIVALS effect, product grid, cart & pay panel, bank dropdown, popup
+*/
+
+:root{
+  --accent: #e63946;
+  --header-bg: #000;
+  --main-bg: #f2f4f7;
+  --text-dark: #111;
+  --blue: #1d4ed8;
+  --pay: #e11d48;
+}
+
+/* ===== reset / base ===== */
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; padding:0}
+body{
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background:var(--main-bg);
+  color:var(--text-dark);
+  line-height:1.4;
+}
+.container{max-width:1200px; margin:0 auto; padding:0 16px}
+
+/* ===== HEADER ===== */
+.site-header{
+  background:var(--header-bg);
+  color:#fff;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.header-inner{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 16px;
+}
+.header-left, .header-center, .header-right{display:flex; align-items:center}
+.header-left{gap:12px}
+.logo-img{height:48px; width:auto; display:block}
+.brand-text{font-size:26px; font-weight:800; color:#fff; user-select:none}
+
+/* header menu links */
+.header-right{gap:18px}
+.header-right a{
+  color:#fff;
+  font-weight:700;
+  padding:6px 4px;
+  position:relative;
+  display:inline-block;
+  transition: transform .18s ease;
+}
+
+/* underline animated (red) */
+.header-right a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-6px;
+  width:0%;
+  height:3px;
+  background:var(--accent);
+  transition:width .28s ease;
+text-decoration:none;
+}
+.header-right a:hover{
+  transform:translateY(-3px);
+}
+.header-right a:hover::after{
+  width:100%;
+}
+
+/* ===== PRODUCT DROPDOWN (Sản phẩm) ===== */
+/* Using hover on parent keeps dropdown open while pointer inside dropdown */
+.menu-dropdown{ position:relative; display:inline-block; }
+.menu-dropdown > a{ color:#fff; display:inline-block; padding:6px 4px; font-weight:700; text-decoration:none }
+.dropdown-content{
+  display:none;
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  min-width:200px;
+  background:#fff;
+  color:#111;
+  border-radius:8px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.12);
+  overflow:hidden;
+  z-index:120;
+}
+.dropdown-content a{
+  display:block;
+  padding:10px 14px;
+  color:#111;
+  font-weight:700;
+  text-decoration:none;
+}
+.dropdown-content a:hover{ background:#f7f7f7; color:var(--accent) }
+/* show on hover - including when hovering dropdown itself */
+.menu-dropdown:hover .dropdown-content{ display:block; }
+
+/* ===== MAIN ===== */
+.site-main{ padding:28px 0; min-height:60vh }
+
+/* ===== NEW ARRIVALS ===== */
+/* Default: black text + black underline.
+   Hover: text shows animated red gradient (running) and underline turns red and expands.
+*/
+.na-section{ padding:6px 0 30px; text-align:center }
+.na-title{
+  font-size:34px;
+  font-weight:800;
+  color:#000;
+  display:inline-block;
+  position:relative;
+  cursor:pointer;
+  padding-bottom:6px;
+  transition: color .25s ease;
+}
+
+/* default black line under */
+.na-title::after{
+  content:"";
+  display:block;
+  width:200px;
+  height:3px;
+  background:#000;
+  margin:8px auto 0;
+  transition: background .25s ease, width .35s ease;
+}
+
+/* hover: text gradient-run then stay red; underline becomes red */
+.na-title:hover{
+  /* make text appear as gradient moving - create a short animation */
+  background: linear-gradient(90deg, var(--accent), #000, var(--accent));
+  background-size:200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation: na-run 1.2s linear forwards;
+  transform: translateY(-2px);
+}
+@keyframes na-run{
+  0%{ background-position:0% }
+  100%{ background-position:200% }
+}
+
+/* Keep underline red while hovered */
+.na-title:hover::after{ background:var(--accent); width:200px; }
+
+/* category tabs */
+.na-tabs{ margin-top:14px; margin-bottom:18px; text-align:center }
+.na-tab{
+  display:inline-block;
+  margin:0 12px;
+  color:gray;
+  font-weight:700;
+  padding:6px 8px;
+  text-decoration:none;
+}
+.na-tab:hover{ color:var(--text-dark) }
+
+/* ===== PRODUCT GRID ===== */
+.product-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:20px }
+.product-card{
+  background:#fff; border-radius:10px; padding:12px; text-align:center;
+  transition: transform .28s ease, box-shadow .28s ease;
+  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+}
+.product-card img{ width:100%; height:180px; object-fit:cover; border-radius:6px }
+.product-card p{ margin-top:10px; font-weight:700 }
+.product-card:hover{ transform:translateY(-10px); box-shadow:0 18px 40px rgba(0,0,0,0.12) }
+
+/* responsiveness */
+@media (max-width:1200px){ .product-grid{ grid-template-columns:repeat(4,1fr) } }
+@media (max-width:900px){ .product-grid{ grid-template-columns:repeat(3,1fr) } .brand-text{ font-size:22px } .logo-img{height:44px} }
+@media (max-width:600px){ .product-grid{ grid-template-columns:repeat(2,1fr) } .header-center{ display:none } }
+
+/* ===== CART & PAYMENT (70/30) ===== */
+.cart-layout{ display:flex; gap:28px; align-items:flex-start; margin-top:20px; flex-wrap:wrap }
+.cart-left{ flex: 1 1 68%; min-width:300px }
+.cart-right{ flex: 0 0 30%; min-width:260px }
+
+/* cart box */
+.cart-box{
+  background:#fff; padding:18px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.06);
+}
+.cart-title{ font-size:20px; font-weight:800; margin-bottom:12px }
+
+/* cart table */
+.cart-table{ width:100%; border-collapse:collapse }
+.cart-table th{ background:#fafafa; padding:12px; text-align:center; font-weight:800 }
+.cart-table td{ padding:12px; border-bottom:1px solid #eee; text-align:center; vertical-align:middle }
+.cart-img{ width:70px; border-radius:6px; display:block; margin:auto }
+
+/* qty */
+.qty-wrap{ display:flex; gap:8px; align-items:center; justify-content:center }
+.qty-btn{ background:#111; color:#fff; padding:6px 10px; border-radius:8px; text-decoration:none; display:inline-block }
+.qty-number{ min-width:28px; text-align:center; font-weight:800 }
+
+/* right pay panel */
+.pay-panel{ background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.06) }
+.pay-header{ background:var(--blue); color:#fff; padding:14px; font-weight:800; text-align:center }
+.pay-body{ padding:16px }
+
+/* total */
+.total-amount{ font-size:20px; font-weight:800; margin:12px 0 }
+
+/* bank dropdown custom */
+.bank-select{ position:relative; border-radius:8px; overflow:hidden; border:1px solid #e6e6e6; background:#fff }
+.bank-selected{ display:flex; gap:10px; align-items:center; padding:10px; cursor:pointer }
+.bank-selected img{ width:36px; height:26px; object-fit:contain }
+.bank-placeholder{ color:#444; font-weight:700 }
+.bank-list{ display:none; position:absolute; left:0; right:0; top:100%; background:#fff; box-shadow:0 8px 28px rgba(0,0,0,0.12); max-height:260px; overflow:auto; z-index:50 }
+.bank-item{ display:flex; gap:10px; align-items:center; padding:10px 12px; cursor:pointer; border-bottom:1px solid #f3f3f3 }
+.bank-item img{ width:34px; height:26px; object-fit:contain }
+.bank-item:hover{ background:#fafafa }
+
+/* pay button */
+.pay-btn{ background:var(--pay); color:#fff; padding:12px; width:100%; border-radius:8px; border:0; font-weight:800; cursor:pointer }
+.pay-btn:hover{ background:#000 }
+
+/* popup QR (hidden by default) */
+.qr-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center }
+.qr-card{ background:#fff; padding:22px; border-radius:10px; width:320px; text-align:center; position:relative; box-shadow:0 18px 48px rgba(0,0,0,0.25) }
+.qr-close{ position:absolute; top:8px; right:10px; cursor:pointer; font-size:20px }
+
+/* helpers */
+.text-muted{ color:#666 }
+.btn-ghost{ background:transparent; border:1px solid #ddd; padding:8px 12px; border-radius:6px }
+
+/* footer */
+.site-footer{ background:var(--footer-bg); border-top:1px solid #ddd; padding:18px 0; margin-top:30px }
+.footer-center{ text-align:center; font-weight:700 }
+
+/* focus accessibility */
+a:focus, button:focus{ outline:3px solid rgba(37,140,251,0.12); outline-offset:2px }

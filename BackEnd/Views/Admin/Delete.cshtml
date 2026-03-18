@@ -1,0 +1,56 @@
+﻿@model BackEnd.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
+<style>
+    .delete-box {
+        width: 400px;
+        margin: 80px auto;
+        background: #fff;
+        padding: 25px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+        .delete-box img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        margin-left: 10px;
+        text-decoration: none;
+        color: #555;
+    }
+</style>
+
+<div class="delete-box">
+
+    <h3>⚠️ Bạn có chắc muốn xóa?</h3>
+
+    <img src="@Model.Image" />
+
+    <p><b>@Model.Name</b></p>
+
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn-delete">Xóa</button>
+        <a href="/Admin" class="btn-cancel">Hủy</a>
+    </form>
+
+</div>

@@ -1,0 +1,342 @@
+﻿@model List<BackEnd.Models.Product>
+
+<link rel="stylesheet" href="~/css/product.css" />
+
+<h2 class="product-title">SẢN PHẨM MIXI SPORT</h2>
+
+<hr class="title-divider">
+
+
+<!-- SECTION ĐẾN VỚI CHÚNG TÔI -->
+
+<div class="why-section">
+
+    <h2 class="why-title">ĐẾN VỚI CHÚNG TÔI</h2>
+
+    <div class="why-grid">
+
+        <div class="why-item">
+
+            <div class="why-icon">
+                <i class="fa-solid fa-shirt"></i>
+            </div>
+
+            <h3>Sản phẩm chất lượng</h3>
+
+            <p>
+                Các sản phẩm thể thao Mixi Sport được chọn lọc kỹ lưỡng,
+                sử dụng chất liệu thoáng khí, bền bỉ và thiết kế hiện đại
+                mang lại sự thoải mái khi vận động.
+            </p>
+
+        </div>
+
+
+        <div class="why-item">
+
+            <div class="why-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <h3>Uy tín & đảm bảo</h3>
+
+            <p>
+                Chúng tôi cam kết mang đến sản phẩm chính hãng,
+                giá cả minh bạch và dịch vụ uy tín,
+                giúp khách hàng luôn yên tâm khi mua sắm.
+            </p>
+
+        </div>
+
+
+        <div class="why-item">
+
+            <div class="why-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+
+            <h3>Hỗ trợ tận tâm</h3>
+
+            <p>
+                Đội ngũ hỗ trợ luôn sẵn sàng tư vấn và giải đáp
+                mọi thắc mắc của khách hàng,
+                mang đến trải nghiệm mua sắm nhanh chóng và thuận tiện.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- PRODUCT GRID -->
+
+<div class="product-grid">
+
+    @foreach (var item in Model)
+    {
+
+        <div class="product-card">
+
+            <img src="@item.Image">
+
+            <p class="product-name">@item.Name</p>
+
+            <p class="price">@item.Price.ToString("N0") VNĐ</p>
+
+
+            <div class="product-rating">
+
+                <span class="rate">@item.Rating</span>
+
+                <span class="stars">
+
+                    @{
+                        int full = (int)Math.Floor(item.Rating);
+                        bool half = (item.Rating - full) >= 0.5;
+                        int empty = 5 - full - (half ? 1 : 0);
+                    }
+
+                    @for (int i = 0; i < full; i++)
+                    {
+                        <i class="fa-solid fa-star star-full"></i>
+                    }
+
+                    @if (half)
+                    {
+                        <i class="fa-solid fa-star-half-stroke star-half"></i>
+                    }
+
+                    @for (int i = 0; i < empty; i++)
+                    {
+                        <i class="fa-regular fa-star star-empty"></i>
+                    }
+
+                </span>
+
+                |
+
+                <span class="review">@item.ReviewCount</span> đánh giá
+
+            </div>
+
+
+            <button class="add-cart"
+                    onclick="openPopup(@item.Id,'@item.Name','@item.Image',@item.Rating,@item.ReviewCount)">
+
+                <i class="fa-solid fa-cart-plus"></i>
+                Thêm vào giỏ hàng
+
+            </button>
+
+        </div>
+
+    }
+
+</div>
+
+
+
+<!-- BACK TO TOP -->
+
+<button id="backToTop">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
+
+<!-- POPUP -->
+
+<div id="cartPopup" class="popup">
+
+    <div class="popup-content">
+
+        <img id="popupImage" class="popup-img">
+
+        <h3 id="popupName"></h3>
+
+        <div class="popup-rating">
+
+            <span id="popupRate"></span>
+
+            <span id="popupStars"></span>
+
+            |
+
+            <span id="popupReview"></span> đánh giá
+
+        </div>
+
+
+        <div class="popup-row">
+
+            <div class="qty-box">
+
+                <span>Số lượng</span>
+
+                <button onclick="minusQty()">-</button>
+
+                <input id="popupQty" value="1" readonly>
+
+                <button onclick="plusQty()">+</button>
+
+            </div>
+
+            <span class="stock">Còn hàng</span>
+
+        </div>
+
+
+        <div class="popup-buttons">
+
+            <button class="popup-cancel" onclick="closePopup()">Hủy</button>
+
+            <button class="popup-add" onclick="confirmAdd()">Thêm vào giỏ</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    let currentProduct = 0;
+
+
+
+    function openPopup(id,name,image,rate,review){
+
+    currentProduct=id;
+
+    document.getElementById("popupName").innerText=name;
+    document.getElementById("popupImage").src=image;
+
+    document.getElementById("popupRate").innerText=rate;
+    document.getElementById("popupReview").innerText=review;
+
+    renderStars(rate);
+
+    document.getElementById("popupQty").value=1;
+
+    document.getElementById("cartPopup").style.display="flex";
+
+    }
+
+
+
+    function renderStars(rate){
+
+    let stars = document.getElementById("popupStars");
+
+    stars.innerHTML="";
+
+    let full=Math.floor(rate);
+    let half=(rate-full)>=0.5;
+    let empty=5-full-(half?1:0);
+
+    for(let i=0;i<full;i++){
+
+    stars.innerHTML+='<i class="fa-solid fa-star star-full"></i>';
+
+    }
+
+    if(half){
+
+    stars.innerHTML+='<i class="fa-solid fa-star-half-stroke star-half"></i>';
+
+    }
+
+    for(let i=0;i<empty;i++){
+
+    stars.innerHTML+='<i class="fa-regular fa-star star-empty"></i>';
+
+    }
+
+    }
+
+
+
+    function closePopup(){
+
+    document.getElementById("cartPopup").style.display="none";
+
+    }
+
+
+
+    function plusQty(){
+
+    let q=document.getElementById("popupQty");
+    q.value=parseInt(q.value)+1;
+
+    }
+
+
+
+    function minusQty(){
+
+    let q=document.getElementById("popupQty");
+
+    if(q.value>1)
+    q.value=parseInt(q.value)-1;
+
+    }
+
+
+
+    function confirmAdd(){
+
+    let qty=document.getElementById("popupQty").value;
+
+    fetch("/Cart/Add?id="+currentProduct+"&qty="+qty)
+
+    .then(response=>{
+
+    if(response.ok){
+
+    alert("Đã thêm vào giỏ hàng");
+    closePopup();
+
+    }
+
+    });
+
+    }
+
+
+
+    const backBtn=document.getElementById("backToTop");
+
+    window.addEventListener("scroll",function(){
+
+    if(window.scrollY>200){
+
+    backBtn.style.display="block";
+
+    }else{
+
+    backBtn.style.display="none";
+
+    }
+
+    });
+
+
+
+    backBtn.addEventListener("click",function(){
+
+    window.scrollTo({
+
+    top:0,
+    behavior:"smooth"
+
+    });
+
+    });
+
+</script>
